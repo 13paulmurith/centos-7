@@ -12,9 +12,9 @@ Effectuez les étapes suivantes.
 
   2. Créez un utilisateur non "root" avec des privilèges d'administrateur.
 
-  3. Installer Git : sudo yum install git
+  3. Installez Git : sudo yum install git
 
-  4. Cloner le dépôt git : `git clone https://gitlab.com/kikinovak/centos-7.git`
+  4. Clonez le dépôt git : `git clone https://gitlab.com/kikinovak/centos-7.git`
 
   5. Déplacez vous vers le nouveau répertoire : "cd centos-7".
 
@@ -26,9 +26,7 @@ Effectuez les étapes suivantes.
 
 ## Personnalisation d'un serveur CentOS
 
-Transformer une installation CentOS minimale en un serveur fonctionnel abouti toujours
-jusqu'à une série d'opérations plus ou moins longues. La durée peut
-varier bien sûr, mais voici ce que je fais habituellement sur une nouvelle installation CentOS :
+Transformez une installation CentOS minimale en un serveur fonctionnel abouti toujours à une série d'opérations plus ou moins longues. La durée peut varier bien sûr, mais voici ce que je fais habituellement sur une nouvelle installation CentOS :
 
   * Personnaliser le shell Bash : prompt, alias, etc.
 
@@ -56,7 +54,7 @@ Configurez Bash et Vim et définissez une résolution de console par défaut plu
 # ./centos-setup.sh --shell
 ```
 
-Mettre en place des dépôts officiels et des dépôts de tiers :
+Mettre en place les dépôts officiels et les dépôts de tiers :
 
 ```
 # ./centos-setup.sh --repos
