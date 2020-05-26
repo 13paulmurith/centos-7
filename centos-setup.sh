@@ -4,32 +4,32 @@
 #
 # (c) Niki Kovacs 2020 <info@microlinux.fr>
 
-# Enterprise Linux version
+# Version Linux entreprise
 VERSION="el7"
 
-# Current directory
+# Répertoire actuel
 CWD=$(pwd)
 
-# Defined users
+# Utilisateurs définis
 USERS="$(ls -A /home)"
 
-# Admin user
+# Utilisateur administrateur
 ADMIN=$(getent passwd 1000 | cut -d: -f 1)
 
-# Remove these packages
+# Retirer ces paquets
 CRUFT=$(egrep -v '(^\#)|(^\s+$)' ${CWD}/${VERSION}/yum/useless-packages.txt)
 
-# Install these packages
+# Installer ces paquets
 EXTRA=$(egrep -v '(^\#)|(^\s+$)' ${CWD}/${VERSION}/yum/extra-packages.txt)
 
-# Defined users
+# Utilisateurs définis
 USERS="$(ls -A /home)"
 
-# Mirrors
+# Mirroirs
 ELREPO="https://elrepo.org/linux/elrepo/${VERSION}/x86_64/RPMS"
 CISOFY="https://packages.cisofy.com"
 
-# Log
+# Journaux
 LOG="/tmp/$(basename "${0}" .sh).log"
 echo > ${LOG}
 
@@ -51,12 +51,12 @@ usage() {
 }
 
 configure_shell() {
-  # Install custom command prompts and a handful of nifty aliases.
+  # Installation des invites de commande personnalisées et des alias.
   echo 'Configuring Bash shell for root.'
   cat ${CWD}/${VERSION}/bash/bashrc-root > /root/.bashrc
   echo 'Configuring Bash shell for users.'
   cat ${CWD}/${VERSION}/bash/bashrc-users > /etc/skel/.bashrc
-  # Existing users might want to use it.
+  # Permets aux utilisateurs existants de pouvoir l'utiliser.
   if [ ! -z "${USERS}" ]
   then
     for USER in ${USERS}
@@ -65,30 +65,30 @@ configure_shell() {
       chown ${USER}:${USER} /home/${USER}/.bashrc
     done
   fi
-  # Add a handful of nifty system-wide options for Vim.
+  # Permet d'ajouter des options astucieuses à l'échelle du système pour Vim.
   echo 'Configuring Vim.'
   cat ${CWD}/${VERSION}/vim/vimrc > /etc/vimrc
-  # Set english as main system language.
+  # Définition de l'anglais comme langue principale du système.
   echo 'Configuring system locale.'
   localectl set-locale LANG=en_US.UTF8
-  # Set console resolution
+  # Permet de régler la résolution de la console
   if [ -f /boot/grub2/grub.cfg ]
   then
     echo 'Configuring console resolution.'
-    sed -i -e 's/rhgb quiet/nomodeset quiet vga=791/g' /etc/default/grub
+    sed -i -e 's/rhgb quiet/nomodeset quiet vga=791/g' /etc/default/grub 
     grub2-mkconfig -o /boot/grub2/grub.cfg >> ${LOG} 2>&1
   fi
 }
 
 configure_repos() {
-  # Enable [base], [updates] and [extra] repos with a priority of 1.
+  # Activation des [bases], [mises à jour] et  des[extra] repos avec une priorité de 1.
   echo 'Configuring official package repositories.'
   cat ${CWD}/${VERSION}/yum/CentOS-Base.repo > /etc/yum.repos.d/CentOS-Base.repo
   sed -i -e 's/installonly_limit=5/installonly_limit=2/g' /etc/yum.conf
-  # Enable [cr] repo with a priority of 1.
+  # Activation [cr] des repo avec une prorité de 1.
   echo 'Configuring CR package repository.'
   cat ${CWD}/${VERSION}/yum/CentOS-CR.repo > /etc/yum.repos.d/CentOS-CR.repo
-  # Enable [sclo] repos with a priority of 1.
+  # Activation des repos [sclo] avec une priorité de 1.
   echo 'Configuring SCLo package repositories.'
   if ! rpm -q centos-release-scl > /dev/null 2>&1
   then
@@ -96,23 +96,23 @@ configure_repos() {
   fi
   cat ${CWD}/${VERSION}/yum/CentOS-SCLo-scl-rh.repo > /etc/yum.repos.d/CentOS-SCLo-scl-rh.repo
   cat ${CWD}/${VERSION}/yum/CentOS-SCLo-scl.repo > /etc/yum.repos.d/CentOS-SCLo-scl.repo
-  # Enable Delta RPM.
+  # Activation du RPM Delta.
   if ! rpm -q deltarpm > /dev/null 2>&1
   then
     echo 'Enabling Delta RPM.'
     yum -y install deltarpm >> ${LOG} 2>&1
   fi
-  # Initial update
+  # Mise à jour initiale
   echo 'Performing initial update.'
   echo 'This might take a moment...'
   yum -y update >> ${LOG} 2>&1
-  # Install Yum-Priorities plugin
+  # Installation le plugin Yum-Priorities
   if ! rpm -q yum-plugin-priorities > /dev/null 2>&1
   then
     echo 'Installing Yum-Priorities plugin.'
     yum -y install yum-plugin-priorities >> ${LOG} 2>&1
   fi
-  # Enable [epel] repo with a priority of 10.
+  # Activation du repo [epel] avec une priorité de 10.
   echo 'Configuring EPEL package repository.' 
   if ! rpm -q epel-release > /dev/null 2>&1
   then
@@ -120,7 +120,7 @@ configure_repos() {
   fi
   cat ${CWD}/${VERSION}/yum/epel.repo > /etc/yum.repos.d/epel.repo
   cat ${CWD}/${VERSION}/yum/epel-testing.repo > /etc/yum.repos.d/epel-testing.repo
-  # Configure [elrepo] and [elrepo-kernel] repos without activating them.
+  # Configuration des repos [elrepo] et [elrepo-kernel] sans les activer.
   echo 'Configuring ELRepo package repositories.'
   if ! rpm -q elrepo-release > /dev/null 2>&1
   then
@@ -128,7 +128,7 @@ configure_repos() {
     ${ELREPO}/elrepo-release-7.0-4.${VERSION}.elrepo.noarch.rpm >> ${LOG} 2>&1
   fi
   cat ${CWD}/${VERSION}/yum/elrepo.repo > /etc/yum.repos.d/elrepo.repo
-  # Enable [lynis] repo with a priority of 5.
+  # Activation du repo [lynis] avec une priorité de 5.
   echo 'Configuring Lynis package repository.'
   if [ ! -f /etc/yum.repos.d/lynis.repo ]
   then
@@ -178,7 +178,7 @@ remove_cruft() {
 }
 
 configure_logs() {
-  # Admin user can access system logs
+  # L'utilisateur administrateur peut accéder aux journaux du système
   if [ ! -z "${ADMIN}" ]
   then
     if getent group systemd-journal | grep ${ADMIN} > /dev/null 2>&1
@@ -192,31 +192,31 @@ configure_logs() {
 }
 
 disable_ipv6() {
-  # Disable IPv6
+  # Désactivation de l'IPv6
   echo 'Disabling IPv6.'
   cat ${CWD}/${VERSION}/sysctl.d/disable-ipv6.conf > /etc/sysctl.d/disable-ipv6.conf
   sysctl -p --load /etc/sysctl.d/disable-ipv6.conf >> $LOG 2>&1
-  # Reconfigure SSH 
+  # Configuration du service SSH 
   if [ -f /etc/ssh/sshd_config ]
   then
     echo 'Configuring SSH server for IPv4 only.'
     sed -i -e 's/#AddressFamily any/AddressFamily inet/g' /etc/ssh/sshd_config
     sed -i -e 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config
   fi
-  # Reconfigure Postfix
+  # Configuration du service Postfix
   if [ -f /etc/postfix/main.cf ]
   then
     echo 'Configuring Postfix server for IPv4 only.'
     sed -i -e 's/inet_protocols = all/inet_protocols = ipv4/g' /etc/postfix/main.cf
     systemctl restart postfix
   fi
-  # Rebuild initrd
+  # Reconstruiction initrd
   echo 'Rebuilding initial ramdisk.'
   dracut -f -v >> $LOG 2>&1
 }
 
 configure_sudo() {
-  # Configure persistent password for sudo.
+  # Configuration d'un mot de passe persistant pour sudo.
   if grep timestamp_timeout /etc/sudoers > /dev/null 2>&1
   then
     echo 'Persistent password for sudo already configured.'
@@ -229,7 +229,7 @@ configure_sudo() {
 }
 
 strip_system() {
-  # Remove all packages that are not part of the enhanced base system.
+  #  Suppression de tous les paquets qui ne font pas partie du système de base amélioré.
   echo 'Stripping system.'
   local TMP='/tmp'
   local PKGLIST="${TMP}/pkglist"
@@ -271,14 +271,14 @@ strip_system() {
   rm -rf ${PKGLIST} ${PKGINFO}
 }
 
-# Make sure the script is being executed with superuser privileges.
+# Assurez-vous que le script est exécuté avec les privilèges de super-utilisateur.
 if [[ "${UID}" -ne 0 ]]
 then
   echo 'Please run with sudo or as root.' >&2
   exit 1
 fi
 
-# Check parameters.
+# Vérifiez les paramètres.
 if [[ "${#}" -ne 1 ]]
 then
   usage
