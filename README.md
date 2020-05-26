@@ -1,120 +1,116 @@
-# Post-installation setup script for CentOS 7 servers 
+# Script de configuration post-installation pour les serveurs CentOS 7 
 
 (c) Niki Kovacs, 2020
 
-This repository provides an "automagic" post-installation setup script for
-servers running CentOS 7 as well as a collection of helper scripts and
-configuration file templates for common services.
+Ce référentiel fournit un script "automatique" de configuration post-installation pour des serveurs fonctionnant sous CentOS 7 ainsi qu'une collection de scripts d'aide et des modèles de fichiers de configurations pour les services communs.
 
-## In a nutshell
+## En bref
 
-Perform the following steps.
+Effectuez les étapes suivantes.
 
-  1. Install a minimal CentOS 7 system.
+  1. Installez un système CentOS 7 minimum.
 
-  2. Create a non-`root` user with administrator privileges.
+  2. Créez un utilisateur non "root" avec des privilèges d'administrateur.
 
-  3. Install Git: `sudo yum install git`
+  3. Installer Git : sudo yum install git
 
-  4. Grab the script: `git clone https://gitlab.com/kikinovak/centos-7.git`
+  4. Cloner le dépôt git : `git clone https://gitlab.com/kikinovak/centos-7.git`
 
-  5. Change into the new directory: `cd centos-7`
+  5. Déplacez vous vers le nouveau répertoire : "cd centos-7".
 
-  6. Run the script: `sudo ./centos-setup.sh --setup`
+  6. Exécutez le script : sudo ./centos-setup.sh --setup
 
-  7. Grab a cup of coffee while the script does all the work.
+  7. Prenez une tasse de café pendant que le script fait tout le travail.
 
-  8. Reboot.
+  8. Redémarrez.
 
+## Personnalisation d'un serveur CentOS
 
-## Customizing a CentOS server
+Transformer une installation CentOS minimale en un serveur fonctionnel abouti toujours
+jusqu'à une série d'opérations plus ou moins longues. La durée peut
+varier bien sûr, mais voici ce que je fais habituellement sur une nouvelle installation CentOS :
 
-Turning a minimal CentOS installation into a functional server always boils
-down to a series of more or less time-consuming operations. Your mileage may
-vary of course, but here's what I usually do on a fresh CentOS installation:
+  * Personnaliser le shell Bash : prompt, alias, etc.
 
-  * Customize the Bash shell : prompt, aliases, etc.
+  * Personnaliser l'éditeur Vim.
 
-  * Customize the Vim editor.
+  * Installation des dépôts officiels et tiers.
 
-  * Setup official and third-party repositories.
+  * Installer un ensemble complet d'outils en ligne de commande.
 
-  * Install a complete set of command line tools.
+  * Supprimer les paquets inutiles.
 
-  * Remove a handful of unneeded packages.
+  * Permettre à l'utilisateur administrateur d'accéder aux journaux du système.
 
-  * Enable the admin user to access system logs.
-
-  * Disable IPv6 and reconfigure some services accordingly.
+  * Désactiver l'IPv6 et reconfigurer certains services en conséquence.
   
-  * Configure a persistent password for `sudo`.
+  * Configurer un mot de passe persistant pour `sudo`.
 
   * Etc.
 
-The `centos-setup.sh` script performs all of these operations.
+Le script `centos-setup.sh` effectue toutes ces opérations.
 
-Configure Bash and Vim and set a more readable default console resolution:
+Configurez Bash et Vim et définissez une résolution de console par défaut plus lisible :
 
 ```
 # ./centos-setup.sh --shell
 ```
 
-Setup official and third-party repositories:
+Mettre en place des dépôts officiels et des dépôts de tiers :
 
 ```
 # ./centos-setup.sh --repos
 ```
 
-Install the `Core` and `Base` package groups along with some extra tools:
+Installez les groupes de paquets `Core` et `Base` ainsi que quelques outils supplémentaires :
 
 ```
 # ./centos-setup.sh --extra
 ```
 
-Remove a handful of unneeded packages:
+Retirez les paquets inutiles :
 
 ```
 # ./centos-setup.sh --prune
 ```
 
-Enable the admin user to access system logs:
+Permettre à l'utilisateur administrateur d'accéder aux journaux du système :
 
 ```
 # ./centos-setup.sh --logs
 ```
 
-Disable IPv6 and reconfigure basic services accordingly:
+Désactivez l'IPv6 et reconfigurez les services de base en conséquence :
 
 ```
 # ./centos-setup.sh --ipv4
 ```
 
-Configure password persistence for sudo:
+Configurez la persistance du mot de passe pour sudo :
 
 ```
 # ./centos-setup.sh --sudo
 ```
 
-Perform all of the above in one go:
+Réalisez tout cela en une seule fois :
 
 ```
 # ./centos-setup.sh --setup
 ```
 
-Strip packages and revert back to an enhanced base system:
+Enlevez les paquets et revenir à un système de base amélioré :
 
 ```
 # ./centos-setup.sh --strip
 ```
 
-Display help message:
+Affichez le message d'aide :
 
 ```
 # ./centos-setup.sh --help
 ```
 
-If you want to know what exactly goes on under the hood, open a second terminal
-and view the logs:
+Si vous voulez savoir ce qui se passe exactement sur le serveur, ouvrez un deuxième terminal et consultez les journaux :
 
 ```
 $ tail -f /tmp/centos-setup.log
